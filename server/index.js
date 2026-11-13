@@ -2,8 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { config } from './config/env.js';
 import db from './config/db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.join(__dirname, '../dist');
 
 // Route Imports
 import authRoutes from './routes/authRoutes.js';
@@ -21,7 +27,12 @@ import { errorHandler } from './middleware/errorHandler.js';
 const app = express();
 
 // Security HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // Cross-Origin Resource Sharing
 const allowedOrigins = config.CORS_ORIGIN.split(',').map((o) => o.trim());
@@ -90,6 +101,14 @@ app.use('/api/*', (req, res) => {
     success: false,
     error: `Endpoint ${req.originalUrl} not found on Loop & Love API server.`,
   });
+});
+
+// Serve frontend static build if present
+app.use(express.static(distPath));
+
+// Client-side SPA routing fallback
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 // Centralized Error Handling

@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Production build output
+dist/
+dist-ssr/
+*.local
+
+# Embedded database & local data
+server/data/pgdata/
+server/data/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+!.env.production.example
+server/.env
+server/.env.*
+!server/.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
